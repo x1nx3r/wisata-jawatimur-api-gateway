@@ -11,9 +11,9 @@
                 <button class="px-4 text-gray-800 font-semibold py-2 rounded transition">
                     {{ __("Keys") }}
                 </button>
-                <button class="px-4 hover:bg-gray-100 text-gray-800 font-semibold py-2 rounded transition">
+                <a href="{{ route('documentations') }}" class="px-4 hover:bg-gray-100 text-gray-800 font-semibold py-2 rounded transition">
                     {{ __("Documentations") }}
-                </button>
+                </a>
             </div>
         </div>
     </x-slot>
