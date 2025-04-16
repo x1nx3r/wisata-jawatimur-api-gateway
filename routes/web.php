@@ -35,4 +35,6 @@ Route::middleware("auth")->group(function () {
     ]);
 });
 
-require __DIR__ . "/auth.php";
+Route::view('/documentations', 'documentations')->name('documentations');
+
+require __DIR__.'/auth.php';

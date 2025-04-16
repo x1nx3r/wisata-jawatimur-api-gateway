@@ -11,9 +11,9 @@
                 <a href="{{ route('dashboard') }}" class="px-4 bg-gray-100 text-gray-800 font-semibold py-2 rounded transition">
                     {{ __("Keys") }}
                 </a>
-                <button class="px-4 hover:bg-gray-100 text-gray-800 font-semibold py-2 rounded transition">
+                <button class="px-4 hover:bg-gray-100 text-gray-800 font-semibold py-2 rounded transition"
                     {{ __("Documentations") }}
-                </button>
+                </a>
             </div>
         </div>
     </x-slot>
@@ -219,7 +219,6 @@
             </div>
         </div>
     </div>
-
     <!-- JavaScript for modals and functionality -->
     <script>
         // Create Key Modal
