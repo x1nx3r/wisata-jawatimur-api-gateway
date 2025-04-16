@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -17,21 +18,14 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $fillable = ["name", "email", "password"];
 
     /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ["password", "remember_token"];
 
     /**
      * Get the attributes that should be cast.
@@ -41,8 +35,39 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            "email_verified_at" => "datetime",
+            "password" => "hashed",
         ];
+    }
+
+    /**
+     * Get the API keys for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function apiKeys(): HasMany
+    {
+        return $this->hasMany(ApiKey::class);
+    }
+
+    /**
+     * Generate a new API key for the user.
+     *
+     * @param string|null $name
+     * @param string|null $description
+     * @param \DateTime|null $expiresAt
+     * @return \App\Models\ApiKey
+     */
+    public function createApiKey(
+        ?string $name = null,
+        ?string $description = null,
+        ?\DateTime $expiresAt = null
+    ): ApiKey {
+        return $this->apiKeys()->create([
+            "name" => $name,
+            "key" => ApiKey::generateKey(),
+            "description" => $description,
+            "expires_at" => $expiresAt,
+        ]);
     }
 }
