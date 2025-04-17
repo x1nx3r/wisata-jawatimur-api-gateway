@@ -8,7 +8,6 @@ This application serves as an API gateway for accessing tourism data (wisata) fo
 - RESTful API endpoints for accessing tourism data
 - Secure authentication using API keys
 - Support for both header-based and query parameter authentication
-- Rate limiting to prevent abuse
 
 ### API Key Management
 - Generate unlimited API keys per user
@@ -72,12 +71,12 @@ This application serves as an API gateway for accessing tourism data (wisata) fo
 
 6. **Build frontend assets**
    ```bash
-   npm run dev
+   npm run build
    ```
 
 7. **Start the server**
    ```bash
-   php artisan serve
+   composer run dev
    ```
 
 8. **Access the application**
@@ -89,28 +88,15 @@ This application serves as an API gateway for accessing tourism data (wisata) fo
 
 ### Authentication
 
-The API supports two authentication methods:
+The API supports authentication with Bearer Token method:
 
-1. **Bearer Token**
+**Bearer Token**
    ```bash
    curl -X GET "http://localhost:8000/api/daerahs" \
      -H "Authorization: Bearer YOUR_API_KEY" \
      -H "Accept: application/json"
    ```
-
-2. **API Key Header**
-   ```bash
-   curl -X GET "http://localhost:8000/api/daerahs" \
-     -H "X-API-KEY: YOUR_API_KEY" \
-     -H "Accept: application/json"
-   ```
-
-3. **Query Parameter**
-   ```bash
-   curl -X GET "http://localhost:8000/api/daerahs?api_key=YOUR_API_KEY" \
-     -H "Accept: application/json"
-   ```
-
+   
 ### Response Format
 
 All API responses are in JSON format:
@@ -122,18 +108,6 @@ All API responses are in JSON format:
     "meta": {...}
 }
 ```
-
-## Development
-
-### Key Project Files
-
-- `app/Models/ApiKey.php` - API key model
-- `app/Http/Middleware/ApiKeyMiddleware.php` - API authentication middleware
-- `app/Http/Controllers/ApiKeyController.php` - API key management
-
-### Adding New Endpoints
-
-To add new API endpoints, modify the routes in `routes/api.php` and create corresponding controllers.
 
 ## License
 
