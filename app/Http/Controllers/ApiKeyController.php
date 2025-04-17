@@ -30,27 +30,32 @@ class ApiKeyController extends Controller
      * Store a newly created API key in storage.
      */
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            "name" => "nullable|string|max:255",
-            "description" => "nullable|string",
-            "expires_at" => "nullable|date",
-        ]);
+{
+    $validated = $request->validate([
+        "name" => "nullable|string|max:255",
+        "description" => "nullable|string",
+        "expires_at" => "nullable|date",
+    ]);
 
-        $apiKey = Auth::user()->createApiKey(
-            $validated["name"] ?? null,
-            $validated["description"] ?? null,
-            $validated["expires_at"] ?? null
+    // Convert expires_at string to DateTime object if present
+    $expiresAt = isset($validated["expires_at"]) 
+        ? new \DateTime($validated["expires_at"]) 
+        : null;
+
+    $apiKey = Auth::user()->createApiKey(
+        $validated["name"] ?? null,
+        $validated["description"] ?? null,
+        $expiresAt
+    );
+
+    return redirect()
+        ->route("dashboard")
+        ->with(
+            "success",
+            'API key created successfully. Make sure to copy your key now as it won\'t be fully visible again: ' .
+                $apiKey->key
         );
-
-        return redirect()
-            ->route("dashboard")
-            ->with(
-                "success",
-                'API key created successfully. Make sure to copy your key now as it won\'t be fully visible again: ' .
-                    $apiKey->key
-            );
-    }
+}
 
     /**
      * Update the specified API key in storage.
