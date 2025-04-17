@@ -1,4 +1,7 @@
 <x-app-layout>
+    <x-slot name="title">
+        {{ __('API Documentation - Wisata Jawa Timur') }}
+    </x-slot>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white p-8 rounded-lg shadow-lg">
@@ -29,15 +32,11 @@
         "data": [
             {
                 "id": 1,
-                "nama_daerah": "Surabaya",
-                "created_at": "2024-04-16T12:00:00.000000Z",
-                "updated_at": "2024-04-16T12:00:00.000000Z"
+                "nama_daerah": "Bangkalan",
             },
             {
                 "id": 2,
-                "nama_daerah": "Malang",
-                "created_at": "2024-04-16T12:00:00.000000Z",
-                "updated_at": "2024-04-16T12:00:00.000000Z"
+                "nama_daerah": "Banyuwangi",
             }
         ]
     }</pre>
@@ -70,12 +69,11 @@
         "data": [
             {
                 "id": 1,
-                "nama_wisata": "Pantai Kenjeran",
-                "deskripsi": "Pantai indah di Surabaya",
-                "alamat": "Jl. Kenjeran No. 1",
                 "id_daerah": 1,
-                "created_at": "2024-04-16T12:00:00.000000Z",
-                "updated_at": "2024-04-16T12:00:00.000000Z"
+                "nama": "Geger Hill",
+                "alamat": "Kesek, Kec. Labang, Kabupaten Bangkalan, Jawa Timur 69163",
+                "rating": 4.2,
+                "link_gmaps":https://maps.app.goo.gl/tbgBonZiPJVN5wSZ6",
             }
         ]
     }</pre>
@@ -106,17 +104,11 @@
         "data": [
             {
                 "id": 1,
-                "nama_wisata": "Pantai Kenjeran",
-                "deskripsi": "Pantai indah di Surabaya",
-                "alamat": "Jl. Kenjeran No. 1",
-                "id_daerah": 1
-            },
-            {
-                "id": 2,
-                "nama_wisata": "Taman Bungkul",
-                "deskripsi": "Taman kota di Surabaya",
-                "alamat": "Jl. Taman Bungkul",
-                "id_daerah": 1
+                "id_daerah": 1,
+                "nama": "Geger Hill",
+                "alamat": "Kesek, Kec. Labang, Kabupaten Bangkalan, Jawa Timur 69163",
+                "rating": 4.2,
+                "link_gmaps":https://maps.app.goo.gl/tbgBonZiPJVN5wSZ6",
             }
         ]
     }</pre>
@@ -125,7 +117,7 @@
                             <div>
                                 <p class="font-medium text-gray-700 mb-2">{{ __("Try it:") }}</p>
                                 <div class="bg-gray-800 p-4 rounded-lg">
-                                    <code class="text-green-400 font-mono">curl -X GET "http://127.0.0.1:8000/api/wisatas/cari-daerah?nama_daerah=Surabaya"</code>
+                                    <code class="text-green-400 font-mono">curl -X GET "http://127.0.0.1:8000/api/wisatas/cari-daerah?nama_daerah=Bangkalan"</code>
                                 </div>
                             </div>
                         </div>
@@ -152,13 +144,14 @@
                                 <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto">
     {
         "data": {
-            "id": 1,
-            "nama_wisata": "Pantai Kenjeran",
-            "deskripsi": "Pantai indah di Surabaya",
-            "alamat": "Jl. Kenjeran No. 1",
-            "id_daerah": 1,
-            "created_at": "2024-04-16T12:00:00.000000Z",
-            "updated_at": "2024-04-16T12:00:00.000000Z"
+            {
+                "id": 1,
+                "id_daerah": 1,
+                "nama": "Geger Hill",
+                "alamat": "Kesek, Kec. Labang, Kabupaten Bangkalan, Jawa Timur 69163",
+                "rating": 4.2,
+                "link_gmaps":https://maps.app.goo.gl/tbgBonZiPJVN5wSZ6",
+            }
         }
     }</pre>
                             </div>
@@ -195,17 +188,11 @@
         "data": [
             {
                 "id": 1,
-                "nama_wisata": "Pantai Kenjeran",
-                "deskripsi": "Pantai indah di Surabaya",
-                "alamat": "Jl. Kenjeran No. 1",
-                "id_daerah": 1
-            },
-            {
-                "id": 2,
-                "nama_wisata": "Taman Bungkul",
-                "deskripsi": "Taman kota di Surabaya",
-                "alamat": "Jl. Taman Bungkul",
-                "id_daerah": 1
+                "id_daerah": 1,
+                "nama": "Geger Hill",
+                "alamat": "Kesek, Kec. Labang, Kabupaten Bangkalan, Jawa Timur 69163",
+                "rating": 4.2,
+                "link_gmaps":https://maps.app.goo.gl/tbgBonZiPJVN5wSZ6",
             }
         ]
     }</pre>
