@@ -1,23 +1,7 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex flex-row items-center justify-between">
-            <!-- Left side - Dashboard Title -->
-            <h2 class="font-semibold text-xl text-gray-800">
-                {{ __('API Gateway Dashboard') }}
-            </h2>
-
-            <!-- Right side - Navigation Buttons -->
-            <div class="flex space-x-4">
-                <a href="{{ route('dashboard') }}" class="px-4 bg-gray-100 text-gray-800 font-semibold py-2 rounded transition">
-                    {{ __("Keys") }}
-                </a>
-                <button class="px-4 hover:bg-gray-100 text-gray-800 font-semibold py-2 rounded transition"
-                    {{ __("Documentations") }}
-                </a>
-            </div>
-        </div>
+    <x-slot name="title">
+        {{ __('API Documentation - Wisata Jawa Timur') }}
     </x-slot>
-
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-col items-center gap-4">
@@ -30,7 +14,7 @@
                         </h1>
                     </div>
                     <div class="flex space-x-4">
-                        <button onclick="showCreateKeyModal()" class="px-4 hover:bg-blue-400 bg-blue-300 text-gray-800 font-semibold py-2 rounded transition">
+                        <button onclick="showCreateKeyModal()" class="px-4 hover:bg-green-500 bg-green-400 text-gray-800 font-semibold py-2 rounded transition">
                             {{ __("Generate A New Key") }}
                         </button>
                     </div>
@@ -145,10 +129,10 @@
                     <input type="date" name="expires_at" id="expires_at" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                 </div>
                 <div class="flex justify-end">
-                    <button type="button" onclick="hideCreateKeyModal()" class="mr-2 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <button type="button" onclick="hideCreateKeyModal()" class="mr-2 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
                         {{ __('Cancel') }}
                     </button>
-                    <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-500 hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
                         {{ __('Generate Key') }}
                     </button>
                 </div>
@@ -188,7 +172,7 @@
                     <button type="button" onclick="hideEditKeyModal()" class="mr-2 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         {{ __('Cancel') }}
                     </button>
-                    <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-500 hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         {{ __('Save Changes') }}
                     </button>
                 </div>

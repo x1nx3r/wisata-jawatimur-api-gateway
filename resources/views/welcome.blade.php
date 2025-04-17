@@ -20,11 +20,11 @@
                 <div class="flex items-center space-x-4">
                     @if (Route::has('login'))
                         @auth
-                            <a href="{{ url('/dashboard') }}" class="btn-primary">Dashboard</a>
+                            <a href="{{ url('/dashboard') }}" class="btn-secondary dark:border-white dark:text-white dark:hover:bg-gray-800">Dashboard</a>
                         @else
-                            <a href="{{ route('login') }}" class="btn-secondary">Log in</a>
+                            <a href="{{ route('login') }}" class="btn-secondary dark:border-white dark:text-white dark:hover:bg-gray-800">Log in</a>
                             @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="btn-primary">Register</a>
+                                <a href="{{ route('register') }}" class="btn-secondary dark:border-white dark:text-white dark:hover:bg-gray-800">Register</a>
                             @endif
                         @endauth
                     @endif
@@ -76,8 +76,8 @@
                     <div class="flex flex-col sm:flex-row gap-4">
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}" 
-                               class="btn-primary text-center">
-                                Get Started - Register Now
+                                class="btn-secondary text-center dark:border-white dark:text-white dark:hover:bg-gray-800 underline decoration-1 underline-offset-4">
+                                Get Started
                             </a>
                         @endif
                     </div>
@@ -98,10 +98,10 @@
 
     <style>
         .btn-primary {
-            @apply px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 font-semibold;
+            @apply px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-300 font-semibold dark:bg-white dark:text-gray-800 dark:hover:bg-gray-100;
         }
         .btn-secondary {
-            @apply px-6 py-3 border-2 border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition-colors duration-300 font-semibold;
+            @apply px-6 py-3 border-2 border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition-colors duration-300 font-semibold dark:border-white dark:text-white dark:hover:bg-gray-800;
         }
     </style>
 </body>

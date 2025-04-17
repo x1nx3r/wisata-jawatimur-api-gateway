@@ -2,26 +2,34 @@
     <!-- Primary Navigation Menu -->
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 justify-between">
-            <div class="flex">
+            <div class="flex items-center space-x-8">
                 <!-- Logo -->
                 <div class="flex shrink-0 items-center">
-                    <a href="{{ route("dashboard") }}">
-                        <x-application-logo
-                            class="block h-9 w-auto fill-current text-gray-800"
-                        />
+                    <a href="{{ route('dashboard') }}">
+                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link
-                        :href="route('dashboard')"
-                        :active="request()->routeIs('dashboard')"
-                    >
-                        {{ __("Dashboard") }}
-                    </x-nav-link>
+                <!-- API Name -->
+                <div class="hidden sm:flex items-center">
+                    <h1 class="text-xl font-semibold text-gray-800">Wisata Jawa Timur API</h1>
                 </div>
             </div>
+
+            <!-- Navigation Links -->
+            <div class="hidden sm:flex sm:items-center">
+                <div class="flex space-x-4">
+                    <a href="{{ route('dashboard') }}" 
+                       class="px-4 py-2 font-semibold text-gray-800 rounded transition relative group {{ request()->routeIs('dashboard') ? 'bg-gray-100' : 'hover:bg-gray-100' }}">
+                        {{ __("Keys") }}
+                        <div class="absolute bottom-0 left-0 w-full h-0.5 bg-green-500 transform scale-x-0 group-hover:scale-x-100 transition-transform {{ request()->routeIs('dashboard') ? 'scale-x-100' : '' }}"></div>
+                    </a>
+                    <a href="{{ route('documentations') }}" 
+                       class="px-4 py-2 font-semibold text-gray-800 rounded transition relative group {{ request()->routeIs('documentations') ? 'bg-gray-100' : 'hover:bg-gray-100' }}">
+                        {{ __("Documentations") }}
+                        <div class="absolute bottom-0 left-0 w-full h-0.5 bg-green-500 transform scale-x-0 group-hover:scale-x-100 transition-transform {{ request()->routeIs('documentations') ? 'scale-x-100' : '' }}"></div>
+                    </a>
+                </div>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:ms-6 sm:flex sm:items-center">
@@ -110,7 +118,14 @@
                 :href="route('dashboard')"
                 :active="request()->routeIs('dashboard')"
             >
-                {{ __("Dashboard") }}
+                {{ __("Keys") }}
+            </x-responsive-nav-link>
+    
+            <x-responsive-nav-link
+                :href="route('documentations')"
+                :active="request()->routeIs('documentations')"
+            >
+                {{ __("Documentations") }}
             </x-responsive-nav-link>
         </div>
 
