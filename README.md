@@ -68,6 +68,12 @@ This application serves as an API gateway for accessing tourism data (wisata) fo
    php artisan migrate
    php artisan db:seed
    ```
+   
+      This will:
+      - Create all necessary tables including `daerahs` and `wisatas`
+      - Seed the database with 31 regions (daerahs) of East Java
+      - Add 154 tourism spots (wisatas) spread across these regions
+      - Set up initial database structure for API key management
 
 6. **Build frontend assets**
    ```bash
