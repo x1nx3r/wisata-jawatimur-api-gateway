@@ -20,9 +20,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (env("APP_ENV") === "production") {
+            \URL::forceScheme("https");
+        }
+
         // Apply middleware to all API routes
-        Route::middleware('api')->group(function () {
-            Route::prefix('api')->group(base_path('routes/api.php'));
+        Route::middleware("api")->group(function () {
+            Route::prefix("api")->group(base_path("routes/api.php"));
         });
     }
 }
