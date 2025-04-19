@@ -22,3 +22,12 @@ Route::middleware([ApiKeyMiddleware::class])->group(function () {
         "byDaerahAndId",
     ]);
 });
+
+Route::get("/ping", function () {
+    try {
+        DB::connection()->getPdo();
+        return response()->json(["status" => "ok"]);
+    } catch (\Throwable $e) {
+        return response()->json(["status" => "db not ready"], 500);
+    }
+});
