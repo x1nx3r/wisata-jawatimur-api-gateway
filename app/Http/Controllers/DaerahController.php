@@ -13,4 +13,10 @@ class DaerahController extends Controller
         $daerahs = Daerah::all(); // Mengambil semua data dari tabel 'daerahs'
         return response()->json($daerahs);
     }
+
+    public function byProvinsi($id_provinsi)
+{
+    $daerahs = Daerah::where('id_provinsi', $id_provinsi)->get();
+    return response()->json($daerahs);
+}
 }

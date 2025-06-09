@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="title">
-        {{ __('API Documentation - Wisata Jawa Timur') }}
+        {{ __('API Documentation - Wisata Pulau Jawa') }}
     </x-slot>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
