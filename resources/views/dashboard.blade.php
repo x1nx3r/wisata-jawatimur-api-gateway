@@ -127,7 +127,7 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             @php
-                                                $status = $key->status; // Using the accessor from the model
+                                                $status = $key->status;
                                                 $statusClass = match($status) {
                                                     'active' => 'bg-green-100 text-green-800',
                                                     'expired' => 'bg-yellow-100 text-yellow-800',
@@ -140,14 +140,27 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button onclick="showEditKeyModal('{{ $key->id }}', '{{ $key->name }}', '{{ $key->description }}', {{ json_encode($key->scopes) }})"
-                                                    class="text-indigo-600 hover:text-indigo-900 mr-3">
-                                                Edit
-                                            </button>
-                                            <button onclick="confirmRevokeKey('{{ $key->id }}', '{{ $key->name }}')"
-                                                    class="text-red-600 hover:text-red-900">
-                                                Revoke
-                                            </button>
+                                            <div class="flex flex-col space-y-1">
+                                                <!-- First row of buttons -->
+                                                <div class="flex space-x-2 justify-end">
+                                                    <button onclick="showEditKeyModal('{{ $key->id }}', '{{ $key->name }}', '{{ $key->description }}', {{ json_encode($key->scopes) }})"
+                                                            class="text-indigo-600 hover:text-indigo-900 text-sm">
+                                                        Edit
+                                                    </button>
+                                                    <button onclick="confirmResetToken('{{ $key->id }}', '{{ $key->name }}')"
+                                                            class="text-orange-600 hover:text-orange-900 text-sm"
+                                                            title="Generate new JWT token with same settings">
+                                                        Reset Token
+                                                    </button>
+                                                </div>
+                                                <!-- Second row of buttons -->
+                                                <div class="flex justify-end">
+                                                    <button onclick="confirmRevokeKey('{{ $key->id }}', '{{ $key->name }}')"
+                                                            class="text-red-600 hover:text-red-900 text-sm">
+                                                        Revoke
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -236,12 +249,18 @@
         </div>
     </div>
 
-    <!-- Token Display Modal (shown after creation) -->
+    <!-- Token Display Modal (shown after creation/reset) -->
     @if(session('api_token'))
         <div id="tokenModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
             <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-medium text-green-600">{{ __('JWT Token Generated Successfully!') }}</h3>
+                    <h3 class="text-lg font-medium text-green-600">
+                        @if(session('token_reset'))
+                            {{ __('JWT Token Reset Successfully!') }}
+                        @else
+                            {{ __('JWT Token Generated Successfully!') }}
+                        @endif
+                    </h3>
                     <button onclick="hideTokenModal()" class="text-gray-400 hover:text-gray-500">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -255,7 +274,13 @@
                         </svg>
                         <div class="ml-3">
                             <h3 class="text-sm font-medium text-yellow-800">Important!</h3>
-                            <p class="text-sm text-yellow-700 mt-1">Copy this token now. You won't be able to see it again!</p>
+                            <p class="text-sm text-yellow-700 mt-1">
+                                @if(session('token_reset'))
+                                    Your old token has been invalidated. Copy this new token now. You won't be able to see it again!
+                                @else
+                                    Copy this token now. You won't be able to see it again!
+                                @endif
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -271,7 +296,7 @@
                 <div class="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
                     <h4 class="text-sm font-medium text-blue-800 mb-2">Usage Example:</h4>
                     <code class="text-xs text-blue-700 bg-blue-100 p-2 rounded block">
-                        curl -H "Authorization: Bearer {{ session('api_token') }}" {{ url('/api/wisata') }}
+                        curl -H "Authorization: Bearer {{ session('api_token') }}" {{ url('/api/provinsis') }}
                     </code>
                 </div>
                 <div class="flex justify-end">
@@ -336,6 +361,40 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Reset Token Confirmation Modal -->
+    <div id="resetTokenModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <div class="mb-4">
+                <h3 class="text-lg font-medium text-gray-900">{{ __('Reset JWT Token') }}</h3>
+                <p class="mt-2 text-sm text-gray-500" id="resetTokenMessage">
+                    {{ __('Are you sure you want to reset this JWT token? This will generate a new token with the same settings and immediately invalidate the current token.') }}
+                </p>
+                <div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <div class="flex">
+                        <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        <div class="ml-3">
+                            <p class="text-sm text-yellow-700">The old token will stop working immediately. Make sure to update any applications using the current token.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" onclick="hideResetTokenModal()" class="mr-2 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    {{ __('Cancel') }}
+                </button>
+                <form id="resetTokenForm" method="POST" class="inline">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                        {{ __('Reset Token') }}
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -428,6 +487,18 @@
 
         function hideEditKeyModal() {
             document.getElementById('editKeyModal').classList.add('hidden');
+        }
+
+        // Reset Token Modal
+        function confirmResetToken(id, name) {
+            const message = `Are you sure you want to reset the JWT token for "${name || 'Unnamed Key'}"? This will generate a new token with the same settings and immediately invalidate the current token.`;
+            document.getElementById('resetTokenMessage').textContent = message;
+            document.getElementById('resetTokenForm').action = `/api-keys/${id}/reset-token`;
+            document.getElementById('resetTokenModal').classList.remove('hidden');
+        }
+
+        function hideResetTokenModal() {
+            document.getElementById('resetTokenModal').classList.add('hidden');
         }
 
         // Revoke Key Modal

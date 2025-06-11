@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Hmac\Sha256;
+use Lcobucci\JWT\Signer\Key\InMemory;
 
 class ApiKeyController extends Controller
 {
@@ -321,6 +324,124 @@ class ApiKeyController extends Controller
             return back()
                 ->withErrors(["error" => "Failed to update API key."])
                 ->withInput();
+        }
+    }
+
+    /**
+     * Reset the JWT token for an API key (generate new token with same settings).
+     */
+    public function resetToken(ApiKey $apiKey)
+    {
+        $this->authorizeApiKey($apiKey);
+
+        DB::beginTransaction();
+
+        try {
+            // Store old data for logging
+            $oldJti = $apiKey->jti;
+
+            // Create new JWT token with same settings but different approach
+            $jwtService = app(\App\Services\JwtApiKeyService::class);
+
+            // Generate new JTI and token data manually to avoid duplicate creation
+            $jti = \Illuminate\Support\Str::uuid()->toString();
+            $now = new \DateTimeImmutable();
+            $expiresAt = $apiKey->expires_at
+                ? new \DateTimeImmutable(
+                    $apiKey->expires_at->format("Y-m-d H:i:s")
+                )
+                : $now->modify("+1 year");
+
+            // Build the JWT token directly using the JWT service's config
+            $config = \Lcobucci\JWT\Configuration::forSymmetricSigner(
+                new \Lcobucci\JWT\Signer\Hmac\Sha256(),
+                \Lcobucci\JWT\Signer\Key\InMemory::plainText(
+                    config("app.jwt_secret", config("app.key"))
+                )
+            );
+
+            $token = $config
+                ->builder()
+                ->issuedBy(config("app.url"))
+                ->permittedFor(config("app.url"))
+                ->identifiedBy($jti)
+                ->issuedAt($now)
+                ->canOnlyBeUsedAfter($now)
+                ->expiresAt($expiresAt)
+                ->relatedTo((string) Auth::user()->id)
+                ->withClaim("type", "api_key")
+                ->withClaim("scopes", $apiKey->scopes)
+                ->withClaim("key_name", $apiKey->name)
+                ->withClaim("user_id", Auth::user()->id)
+                ->getToken($config->signer(), $config->signingKey());
+
+            // Update the existing API key with new JWT data
+            $apiKey->update([
+                "jti" => $jti,
+                "last_used_at" => null, // Reset usage tracking
+                "last_used_ip" => null,
+            ]);
+
+            // Log the token reset
+            Log::info("JWT API key token reset", [
+                "user_id" => Auth::id(),
+                "user_email" => Auth::user()->email,
+                "key_id" => $apiKey->id,
+                "key_name" => $apiKey->name,
+                "old_jti" => $oldJti,
+                "new_jti" => $apiKey->jti,
+                "scopes" => $apiKey->scopes,
+                "ip_address" => request()->ip(),
+                "user_agent" => request()->userAgent(),
+            ]);
+
+            DB::commit();
+
+            if (request()->expectsJson()) {
+                return response()->json([
+                    "success" => true,
+                    "token" => $token->toString(),
+                    "api_key" => $apiKey->fresh(),
+                    "message" =>
+                        "JWT token reset successfully. The old token has been invalidated.",
+                ]);
+            }
+
+            return redirect()
+                ->route("dashboard")
+                ->with(
+                    "success",
+                    "JWT token reset successfully! The old token has been invalidated."
+                )
+                ->with("api_token", $token->toString())
+                ->with("token_reset", true);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error("JWT API key token reset failed", [
+                "user_id" => Auth::id(),
+                "key_id" => $apiKey->id,
+                "error" => $e->getMessage(),
+                "trace" => $e->getTraceAsString(),
+                "ip_address" => request()->ip(),
+            ]);
+
+            if (request()->expectsJson()) {
+                return response()->json(
+                    [
+                        "success" => false,
+                        "message" => "Failed to reset JWT token.",
+                        "error" => config("app.debug")
+                            ? $e->getMessage()
+                            : "Internal server error",
+                    ],
+                    500
+                );
+            }
+
+            return back()->withErrors([
+                "error" => "Failed to reset JWT token.",
+            ]);
         }
     }
 

@@ -40,10 +40,16 @@ Route::middleware("auth")->group(function () {
         "revokeAll",
     ])->name("api-keys.revoke-all");
 
-    Route::post("api-keys/{apiKey}/validate", [
+    Route::patch("api-keys/{apiKey}/reset-token", [
+        ApiKeyController::class,
+        "resetToken",
+    ])->name("api-keys.reset-token");
+
+    // Fix: validateToken doesn't need apiKey parameter, it validates any token
+    Route::post("api-keys/validate-token", [
         ApiKeyController::class,
         "validateToken",
-    ])->name("api-keys.validate");
+    ])->name("api-keys.validate-token");
 });
 
 Route::view("/documentations", "documentations")->name("documentations");

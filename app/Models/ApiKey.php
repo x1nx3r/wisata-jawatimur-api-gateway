@@ -97,7 +97,7 @@ class ApiKey extends Model
     /**
      * Update the last used timestamp and IP.
      */
-    public function markAsUsed(string $ipAddress = null): bool
+    public function markAsUsed(?string $ipAddress = null): bool
     {
         return $this->update([
             "last_used_at" => now(),
