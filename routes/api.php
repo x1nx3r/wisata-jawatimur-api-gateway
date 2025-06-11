@@ -32,19 +32,6 @@ Route::get("/info", function () {
     ]);
 });
 
-// JWT API key management routes (for authenticated web users)
-Route::middleware("auth:sanctum")->group(function () {
-    Route::apiResource("api-keys", ApiKeyController::class)->except(["show"]);
-    Route::post("api-keys/revoke-all", [
-        ApiKeyController::class,
-        "revokeAll",
-    ])->name("api-keys.revoke-all");
-    Route::post("api-keys/validate-token", [
-        ApiKeyController::class,
-        "validateToken",
-    ])->name("api-keys.validate-token");
-});
-
 // Protected routes requiring JWT API key with READ scope
 Route::middleware([JwtApiAuthentication::class . ":read"])->group(function () {
     // Provinsi - Read operations

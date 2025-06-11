@@ -1,21 +1,26 @@
 {
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "vite build",
-    "dev": "vite",
-    "format": "prettier --write resources/views/**/*.blade.php --parser blade"
-  },
-  "devDependencies": {
-    "@tailwindcss/forms": "^0.5.2",
-    "@tailwindcss/vite": "^4.0.0",
-    "alpinejs": "^3.4.2",
-    "autoprefixer": "^10.4.21",
-    "axios": "^1.8.2",
-    "concurrently": "^9.0.1",
-    "laravel-vite-plugin": "^1.2.0",
-    "postcss": "^8.4.31",
-    "tailwindcss": "^3.1.0",
-    "vite": "^6.2.4"
-  }
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "format": "prettier --write resources/views/**/*.blade.php --parser blade",
+        "migrate": "php artisan migrate:fresh --force",
+        "seed": "php artisan db:seed --force",
+        "migrate:seed": "php artisan migrate:fresh --seed --force",
+        "deploy": "php artisan migrate:fresh --seed --force",
+        "start": "php artisan migrate:fresh --seed --force && php artisan serve --host=0.0.0.0 --port=$PORT"
+    },
+    "devDependencies": {
+        "@tailwindcss/forms": "^0.5.2",
+        "@tailwindcss/vite": "^4.0.0",
+        "alpinejs": "^3.4.2",
+        "autoprefixer": "^10.4.21",
+        "axios": "^1.8.2",
+        "concurrently": "^9.0.1",
+        "laravel-vite-plugin": "^1.2.0",
+        "postcss": "^8.4.31",
+        "tailwindcss": "^3.1.0",
+        "vite": "^6.2.4"
+    }
 }
