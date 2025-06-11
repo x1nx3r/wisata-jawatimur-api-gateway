@@ -5,22 +5,22 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-col items-center gap-4">
+            <div class="flex flex-col items-center gap-4">
 
                 <!-- API Keys Header with Generate Button -->
-                <div class="flex flex-row w-full md:w-4/5 m-1 p-6 text-gray-900 items-center justify-between bg-white rounded-lg">
-                    <div class="flex flex-col py-2">
+                <div class="flex flex-row w-full m-1 p-6 text-gray-900 items-center justify-between bg-white rounded-lg shadow">
+                    <div class="flex flex-col py-2 min-w-0 flex-1">
                         <h1 class="text-gray-800 font-bold text-xl">
                             {{ __("Your JWT API Keys") }}
                         </h1>
                         <p class="text-sm text-gray-600">Manage your JWT API tokens for secure access</p>
                     </div>
-                    <div class="flex space-x-4">
-                        <button onclick="showCreateKeyModal()" class="px-4 hover:bg-green-500 bg-green-400 text-gray-800 font-semibold py-2 rounded transition">
+                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 ml-4">
+                        <button onclick="showCreateKeyModal()" class="px-4 hover:bg-green-500 bg-green-400 text-gray-800 font-semibold py-2 rounded transition whitespace-nowrap">
                             {{ __("Generate New JWT Key") }}
                         </button>
                         @if(isset($apiKeys) && count($apiKeys) > 0)
-                            <button onclick="confirmRevokeAll()" class="px-4 hover:bg-red-500 bg-red-400 text-gray-800 font-semibold py-2 rounded transition">
+                            <button onclick="confirmRevokeAll()" class="px-4 hover:bg-red-500 bg-red-400 text-gray-800 font-semibold py-2 rounded transition whitespace-nowrap">
                                 {{ __("Revoke All") }}
                             </button>
                         @endif
@@ -29,14 +29,14 @@
 
                 <!-- Success Message -->
                 @if (session('success'))
-                    <div class="w-full md:w-4/5 m-1 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                    <div class="w-full m-1 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
                         {{ session('success') }}
                     </div>
                 @endif
 
                 <!-- Error Messages -->
                 @if ($errors->any())
-                    <div class="w-full md:w-4/5 m-1 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                    <div class="w-full m-1 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
                         <ul class="list-disc list-inside">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -46,126 +46,142 @@
                 @endif
 
                 <!-- API Keys Table -->
-                <div class="w-full md:w-4/5 m-1 bg-white rounded-lg shadow">
+                <div class="w-full m-1 bg-white rounded-lg shadow overflow-hidden">
                     @if(isset($apiKeys) && count($apiKeys) > 0)
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {{ __('Name & Description') }}
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {{ __('JWT ID') }}
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {{ __('Scopes') }}
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {{ __('Created') }}
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {{ __('Last Used') }}
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {{ __('Status') }}
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {{ __('Actions') }}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach($apiKeys as $key)
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-medium text-gray-900">{{ $key->name ?? 'Unnamed Key' }}</div>
-                                            <div class="text-sm text-gray-500">{{ Str::limit($key->description, 40) }}</div>
-                                            @if($key->expires_at)
-                                                <div class="text-xs text-orange-600">Expires: {{ $key->expires_at->format('M d, Y') }}</div>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <span class="text-sm text-gray-900 font-mono">{{ $key->masked_jti }}</span>
-                                                <button onclick="copyToClipboard('{{ $key->jti }}')" class="ml-2 text-gray-400 hover:text-gray-600" title="Copy JTI">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex flex-wrap gap-1">
-                                                @if(is_array($key->scopes))
-                                                    @foreach($key->scopes as $scope)
-                                                        <span class="px-2 py-1 text-xs font-medium rounded-full
-                                                            {{ $scope === 'admin' ? 'bg-red-100 text-red-800' :
-                                                               ($scope === 'write' ? 'bg-blue-100 text-blue-800' :
-                                                               ($scope === 'delete' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800')) }}">
-                                                            {{ ucfirst($scope) }}
-                                                        </span>
-                                                    @endforeach
-                                                @else
-                                                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">None</span>
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $key->created_at->format('M d, Y') }}
-                                            <div class="text-xs text-gray-400">{{ $key->created_at->diffForHumans() }}</div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            @if($key->last_used_at)
-                                                {{ $key->last_used_at->format('M d, Y H:i') }}
-                                                <div class="text-xs text-gray-400">{{ $key->last_used_at->diffForHumans() }}</div>
-                                                @if($key->last_used_ip)
-                                                    <div class="text-xs text-gray-400">IP: {{ $key->last_used_ip }}</div>
-                                                @endif
-                                            @else
-                                                <span class="text-gray-400">Never used</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            @php
-                                                $status = $key->status;
-                                                $statusClass = match($status) {
-                                                    'active' => 'bg-green-100 text-green-800',
-                                                    'expired' => 'bg-yellow-100 text-yellow-800',
-                                                    'revoked' => 'bg-red-100 text-red-800',
-                                                    default => 'bg-gray-100 text-gray-800'
-                                                };
-                                            @endphp
-                                            <span class="px-2 py-1 text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
-                                                {{ ucfirst($status) }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <div class="flex flex-col space-y-1">
-                                                <!-- First row of buttons -->
-                                                <div class="flex space-x-2 justify-end">
-                                                    <button onclick="showEditKeyModal('{{ $key->id }}', '{{ $key->name }}', '{{ $key->description }}', {{ json_encode($key->scopes) }})"
-                                                            class="text-indigo-600 hover:text-indigo-900 text-sm">
-                                                        Edit
-                                                    </button>
-                                                    <button onclick="confirmResetToken('{{ $key->id }}', '{{ $key->name }}')"
-                                                            class="text-orange-600 hover:text-orange-900 text-sm"
-                                                            title="Generate new JWT token with same settings">
-                                                        Reset Token
-                                                    </button>
-                                                </div>
-                                                <!-- Second row of buttons -->
-                                                <div class="flex justify-end">
-                                                    <button onclick="confirmRevokeKey('{{ $key->id }}', '{{ $key->name }}')"
-                                                            class="text-red-600 hover:text-red-900 text-sm">
-                                                        Revoke
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </td>
+                                        <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
+                                            {{ __('Name & Description') }}
+                                        </th>
+                                        <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">
+                                            {{ __('JWT ID') }}
+                                        </th>
+                                        <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
+                                            {{ __('Scopes') }}
+                                        </th>
+                                        <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">
+                                            {{ __('Created') }}
+                                        </th>
+                                        <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
+                                            {{ __('Last Used') }}
+                                        </th>
+                                        <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">
+                                            {{ __('Status') }}
+                                        </th>
+                                        <th scope="col" class="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
+                                            {{ __('Actions') }}
+                                        </th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($apiKeys as $key)
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-3 py-4 align-top">
+                                                <div class="min-w-0">
+                                                    <div class="text-sm font-medium text-gray-900 truncate" title="{{ $key->name ?? 'Unnamed Key' }}">
+                                                        {{ Str::limit($key->name ?? 'Unnamed Key', 20) }}
+                                                    </div>
+                                                    @if($key->description)
+                                                        <div class="text-xs text-gray-500 truncate" title="{{ $key->description }}">
+                                                            {{ Str::limit($key->description, 30) }}
+                                                        </div>
+                                                    @endif
+                                                    @if($key->expires_at)
+                                                        <div class="text-xs text-orange-600 truncate">
+                                                            Expires: {{ $key->expires_at->format('M d, Y') }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td class="px-3 py-4 align-top">
+                                                <div class="flex items-center min-w-0">
+                                                    <span class="text-xs text-gray-900 font-mono truncate flex-1" title="{{ $key->jti }}">
+                                                        {{ $key->masked_jti }}
+                                                    </span>
+                                                    <button onclick="copyToClipboard('{{ $key->jti }}')" class="ml-1 text-gray-400 hover:text-gray-600 flex-shrink-0" title="Copy JTI">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td class="px-3 py-4 align-top">
+                                                <div class="flex flex-wrap gap-1">
+                                                    @if(is_array($key->scopes))
+                                                        @foreach($key->scopes as $scope)
+                                                            <span class="px-1.5 py-0.5 text-xs font-medium rounded-full whitespace-nowrap
+                                                                {{ $scope === 'admin' ? 'bg-red-100 text-red-800' :
+                                                                   ($scope === 'write' ? 'bg-blue-100 text-blue-800' :
+                                                                   ($scope === 'delete' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800')) }}">
+                                                                {{ ucfirst($scope) }}
+                                                            </span>
+                                                        @endforeach
+                                                    @else
+                                                        <span class="px-1.5 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-800">None</span>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td class="px-3 py-4 text-xs text-gray-500 align-top">
+                                                <div class="truncate">{{ $key->created_at->format('M d, Y') }}</div>
+                                                <div class="text-xs text-gray-400 truncate">{{ $key->created_at->diffForHumans() }}</div>
+                                            </td>
+                                            <td class="px-3 py-4 text-xs text-gray-500 align-top">
+                                                @if($key->last_used_at)
+                                                    <div class="truncate">{{ $key->last_used_at->format('M d, Y H:i') }}</div>
+                                                    <div class="text-xs text-gray-400 truncate">{{ $key->last_used_at->diffForHumans() }}</div>
+                                                    @if($key->last_used_ip)
+                                                        <div class="text-xs text-gray-400 truncate" title="{{ $key->last_used_ip }}">
+                                                            IP: {{ Str::limit($key->last_used_ip, 12) }}
+                                                        </div>
+                                                    @endif
+                                                @else
+                                                    <span class="text-gray-400">Never used</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-3 py-4 align-top">
+                                                @php
+                                                    $status = $key->status;
+                                                    $statusClass = match($status) {
+                                                        'active' => 'bg-green-100 text-green-800',
+                                                        'expired' => 'bg-yellow-100 text-yellow-800',
+                                                        'revoked' => 'bg-red-100 text-red-800',
+                                                        default => 'bg-gray-100 text-gray-800'
+                                                    };
+                                                @endphp
+                                                <span class="px-2 py-1 text-xs leading-5 font-semibold rounded-full {{ $statusClass }} whitespace-nowrap">
+                                                    {{ ucfirst($status) }}
+                                                </span>
+                                            </td>
+                                            <td class="px-3 py-4 text-right text-xs font-medium align-top">
+                                                <div class="flex flex-col space-y-1">
+                                                    <!-- First row of buttons -->
+                                                    <div class="flex space-x-1 justify-end">
+                                                        <button onclick="showEditKeyModal('{{ $key->id }}', '{{ $key->name }}', '{{ $key->description }}', {{ json_encode($key->scopes) }})"
+                                                                class="text-indigo-600 hover:text-indigo-900 text-xs whitespace-nowrap">
+                                                            Edit
+                                                        </button>
+                                                        <button onclick="confirmResetToken('{{ $key->id }}', '{{ $key->name }}')"
+                                                                class="text-orange-600 hover:text-orange-900 text-xs whitespace-nowrap"
+                                                                title="Generate new JWT token with same settings">
+                                                            Reset
+                                                        </button>
+                                                    </div>
+                                                    <!-- Second row of buttons -->
+                                                    <div class="flex justify-end">
+                                                        <button onclick="confirmRevokeKey('{{ $key->id }}', '{{ $key->name }}')"
+                                                                class="text-red-600 hover:text-red-900 text-xs whitespace-nowrap">
+                                                            Revoke
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     @else
                         <div class="p-6 text-center text-gray-500">
                             <div class="mb-4">
@@ -183,8 +199,8 @@
     </div>
 
     <!-- Create Key Modal -->
-    <div id="createKeyModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+    <div id="createKeyModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-medium">{{ __('Generate New JWT API Key') }}</h3>
                 <button onclick="hideCreateKeyModal()" class="text-gray-400 hover:text-gray-500">
@@ -197,11 +213,60 @@
                 @csrf
                 <div class="mb-4">
                     <label for="name" class="block text-sm font-medium text-gray-700">{{ __('Key Name') }} <span class="text-red-500">*</span></label>
-                    <input type="text" name="name" id="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" placeholder="My API Key">
+                    <input type="text" name="name" id="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" placeholder="My API Key" maxlength="255">
                 </div>
                 <div class="mb-4">
                     <label for="description" class="block text-sm font-medium text-gray-700">{{ __('Description') }}</label>
-                    <textarea name="description" id="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" placeholder="What this key will be used for"></textarea>
+                    <textarea name="description" id="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" placeholder="What this key will be used for" maxlength="1000"></textarea>
+                        <x-slot name="title">
+                            {{ __('API Documentation - Wisata Pulau Jawa') }}
+                        </x-slot>
+
+                        <div class="py-12">
+                            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                                <div class="flex flex-col items-center gap-4">
+
+                                    <!-- API Keys Header with Generate Button -->
+                                    <div class="flex flex-row w-full m-1 p-6 text-gray-900 items-center justify-between bg-white rounded-lg shadow">
+                                        <div class="flex flex-col py-2 min-w-0 flex-1">
+                                            <h1 class="text-gray-800 font-bold text-xl">
+                                                {{ __("Your JWT API Keys") }}
+                                            </h1>
+                                            <p class="text-sm text-gray-600">Manage your JWT API tokens for secure access</p>
+                                        </div>
+                                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 ml-4">
+                                            <button onclick="showCreateKeyModal()" class="px-4 hover:bg-green-500 bg-green-400 text-gray-800 font-semibold py-2 rounded transition whitespace-nowrap">
+                                                {{ __("Generate New JWT Key") }}
+                                            </button>
+                                            @if(isset($apiKeys) && count($apiKeys) > 0)
+                                                <button onclick="confirmRevokeAll()" class="px-4 hover:bg-red-500 bg-red-400 text-gray-800 font-semibold py-2 rounded transition whitespace-nowrap">
+                                                    {{ __("Revoke All") }}
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- Success Message -->
+                                    @if (session('success'))
+                                        <div class="w-full m-1 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                                            {{ session('success') }}
+                                        </div>
+                                    @endif
+
+                                    <!-- Error Messages -->
+                                    @if ($errors->any())
+                                        <div class="w-full m-1 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                                            <ul class="list-disc list-inside">
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+
+                                    <!-- API Keys Table -->
+                                    <div class="w-full m-1 bg
+0"></textarea>
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('Scopes (Permissions)') }} <span class="text-red-500">*</span></label>
@@ -237,8 +302,8 @@
                     <input type="date" name="expires_at" id="expires_at" min="{{ date('Y-m-d', strtotime('+1 day')) }}" max="{{ date('Y-m-d', strtotime('+5 years')) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <p class="mt-1 text-sm text-gray-500">Leave empty for no expiration</p>
                 </div>
-                <div class="flex justify-end">
-                    <button type="button" onclick="hideCreateKeyModal()" class="mr-2 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="hideCreateKeyModal()" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
                         {{ __('Cancel') }}
                     </button>
                     <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-500 hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
@@ -251,8 +316,8 @@
 
     <!-- Token Display Modal (shown after creation/reset) -->
     @if(session('api_token'))
-        <div id="tokenModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl">
+        <div id="tokenModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-medium text-green-600">
                         @if(session('token_reset'))
@@ -269,7 +334,7 @@
                 </div>
                 <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
                     <div class="flex">
-                        <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="h-5 w-5 text-yellow-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                         </svg>
                         <div class="ml-3">
@@ -287,17 +352,19 @@
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Your JWT Token:</label>
                     <div class="flex items-center bg-gray-50 p-3 rounded-md border">
-                        <input type="text" value="{{ session('api_token') }}" readonly class="flex-1 bg-transparent border-none text-sm font-mono text-gray-900 focus:outline-none" id="generatedToken">
-                        <button onclick="copyToClipboard('{{ session('api_token') }}')" class="ml-2 px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" value="{{ session('api_token') }}" readonly class="flex-1 bg-transparent border-none text-sm font-mono text-gray-900 focus:outline-none overflow-hidden" id="generatedToken">
+                        <button onclick="copyToClipboard('{{ session('api_token') }}')" class="ml-2 px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex-shrink-0">
                             Copy
                         </button>
                     </div>
                 </div>
                 <div class="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
                     <h4 class="text-sm font-medium text-blue-800 mb-2">Usage Example:</h4>
-                    <code class="text-xs text-blue-700 bg-blue-100 p-2 rounded block">
-                        curl -H "Authorization: Bearer {{ session('api_token') }}" {{ url('/api/provinsis') }}
-                    </code>
+                    <div class="bg-blue-100 rounded p-2 overflow-x-auto">
+                        <code class="text-xs text-blue-700 whitespace-nowrap">
+                            curl -H "Authorization: Bearer {{ Str::limit(session('api_token'), 50) }}..." {{ url('/api/provinsis') }}
+                        </code>
+                    </div>
                 </div>
                 <div class="flex justify-end">
                     <button onclick="hideTokenModal()" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-500 hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
@@ -309,8 +376,8 @@
     @endif
 
     <!-- Edit Key Modal -->
-    <div id="editKeyModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+    <div id="editKeyModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-medium">{{ __('Edit JWT API Key') }}</h3>
                 <button onclick="hideEditKeyModal()" class="text-gray-400 hover:text-gray-500">
@@ -324,11 +391,11 @@
                 @method('PUT')
                 <div class="mb-4">
                     <label for="edit_name" class="block text-sm font-medium text-gray-700">{{ __('Key Name') }}</label>
-                    <input type="text" name="name" id="edit_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    <input type="text" name="name" id="edit_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" maxlength="255">
                 </div>
                 <div class="mb-4">
                     <label for="edit_description" class="block text-sm font-medium text-gray-700">{{ __('Description') }}</label>
-                    <textarea name="description" id="edit_description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"></textarea>
+                    <textarea name="description" id="edit_description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" maxlength="1000"></textarea>
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('Scopes (Permissions)') }}</label>
@@ -352,8 +419,8 @@
                     </div>
                     <p class="mt-1 text-sm text-yellow-600">Note: Existing tokens will retain their original scopes until they expire.</p>
                 </div>
-                <div class="flex justify-end">
-                    <button type="button" onclick="hideEditKeyModal()" class="mr-2 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="hideEditKeyModal()" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         {{ __('Cancel') }}
                     </button>
                     <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-500 hover:bg-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -365,7 +432,7 @@
     </div>
 
     <!-- Reset Token Confirmation Modal -->
-    <div id="resetTokenModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div id="resetTokenModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
         <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
             <div class="mb-4">
                 <h3 class="text-lg font-medium text-gray-900">{{ __('Reset JWT Token') }}</h3>
@@ -374,8 +441,8 @@
                 </p>
                 <div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
                     <div class="flex">
-                        <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 0 00-1-1z" clip-rule="evenodd"/>
+                        <svg class="h-5 w-5 text-yellow-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                         </svg>
                         <div class="ml-3">
                             <p class="text-sm text-yellow-700">The old token will stop working immediately. Make sure to update any applications using the current token.</p>
@@ -383,8 +450,8 @@
                     </div>
                 </div>
             </div>
-            <div class="flex justify-end">
-                <button type="button" onclick="hideResetTokenModal()" class="mr-2 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="hideResetTokenModal()" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     {{ __('Cancel') }}
                 </button>
                 <form id="resetTokenForm" method="POST" class="inline">
@@ -399,16 +466,16 @@
     </div>
 
     <!-- Revoke Confirmation Modal -->
-    <div id="revokeConfirmModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div id="revokeConfirmModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
         <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
             <div class="mb-4">
                 <h3 class="text-lg font-medium text-gray-900">{{ __('Confirm Revocation') }}</h3>
-                <p class="mt-2 text-sm text-gray-500" id="revokeMessage">
+                <p class="mt-2 text-sm text-gray-500 break-words" id="revokeMessage">
                     {{ __('Are you sure you want to revoke this JWT API key? This action cannot be undone and will immediately invalidate the token.') }}
                 </p>
             </div>
-            <div class="flex justify-end">
-                <button type="button" onclick="hideRevokeModal()" class="mr-2 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="hideRevokeModal()" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     {{ __('Cancel') }}
                 </button>
                 <form id="revokeKeyForm" method="POST" class="inline">
@@ -423,7 +490,7 @@
     </div>
 
     <!-- Revoke All Confirmation Modal -->
-    <div id="revokeAllModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div id="revokeAllModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
         <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
             <div class="mb-4">
                 <h3 class="text-lg font-medium text-red-900">{{ __('Revoke All JWT Keys') }}</h3>
@@ -431,8 +498,8 @@
                     {{ __('Are you sure you want to revoke ALL your JWT API keys? This will immediately invalidate all your tokens and cannot be undone.') }}
                 </p>
             </div>
-            <div class="flex justify-end">
-                <button type="button" onclick="hideRevokeAllModal()" class="mr-2 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="hideRevokeAllModal()" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
                     {{ __('Cancel') }}
                 </button>
                 <form action="{{ route('api-keys.revoke-all') }}" method="POST" class="inline">
