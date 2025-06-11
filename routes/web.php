@@ -10,7 +10,7 @@ Route::get("/", function () {
 });
 
 Route::get("/dashboard", function () {
-    $apiKeys = Auth::user()->apiKeys()->get(); // Make sure we call get() to execute the query
+    $apiKeys = Auth::user()->apiKeys()->latest()->get();
     return view("dashboard", compact("apiKeys"));
 })
     ->middleware(["auth", "verified"])
@@ -27,14 +27,31 @@ Route::middleware("auth")->group(function () {
         "profile.destroy"
     );
 
-    // API Keys routes
+    // JWT API Keys routes
     Route::resource("api-keys", ApiKeyController::class)->except([
         "show",
         "edit",
         "create",
     ]);
+
+    // Additional JWT API key routes
+    Route::post("api-keys/revoke-all", [
+        ApiKeyController::class,
+        "revokeAll",
+    ])->name("api-keys.revoke-all");
+
+    Route::patch("api-keys/{apiKey}/reset-token", [
+        ApiKeyController::class,
+        "resetToken",
+    ])->name("api-keys.reset-token");
+
+    // Fix: validateToken doesn't need apiKey parameter, it validates any token
+    Route::post("api-keys/validate-token", [
+        ApiKeyController::class,
+        "validateToken",
+    ])->name("api-keys.validate-token");
 });
 
-Route::view('/documentations', 'documentations')->name('documentations');
+Route::view("/documentations", "documentations")->name("documentations");
 
-require __DIR__.'/auth.php';
+require __DIR__ . "/auth.php";
