@@ -218,55 +218,6 @@
                 <div class="mb-4">
                     <label for="description" class="block text-sm font-medium text-gray-700">{{ __('Description') }}</label>
                     <textarea name="description" id="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" placeholder="What this key will be used for" maxlength="1000"></textarea>
-                        <x-slot name="title">
-                            {{ __('API Documentation - Wisata Pulau Jawa') }}
-                        </x-slot>
-
-                        <div class="py-12">
-                            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                                <div class="flex flex-col items-center gap-4">
-
-                                    <!-- API Keys Header with Generate Button -->
-                                    <div class="flex flex-row w-full m-1 p-6 text-gray-900 items-center justify-between bg-white rounded-lg shadow">
-                                        <div class="flex flex-col py-2 min-w-0 flex-1">
-                                            <h1 class="text-gray-800 font-bold text-xl">
-                                                {{ __("Your JWT API Keys") }}
-                                            </h1>
-                                            <p class="text-sm text-gray-600">Manage your JWT API tokens for secure access</p>
-                                        </div>
-                                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 ml-4">
-                                            <button onclick="showCreateKeyModal()" class="px-4 hover:bg-green-500 bg-green-400 text-gray-800 font-semibold py-2 rounded transition whitespace-nowrap">
-                                                {{ __("Generate New JWT Key") }}
-                                            </button>
-                                            @if(isset($apiKeys) && count($apiKeys) > 0)
-                                                <button onclick="confirmRevokeAll()" class="px-4 hover:bg-red-500 bg-red-400 text-gray-800 font-semibold py-2 rounded transition whitespace-nowrap">
-                                                    {{ __("Revoke All") }}
-                                                </button>
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                    <!-- Success Message -->
-                                    @if (session('success'))
-                                        <div class="w-full m-1 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-                                            {{ session('success') }}
-                                        </div>
-                                    @endif
-
-                                    <!-- Error Messages -->
-                                    @if ($errors->any())
-                                        <div class="w-full m-1 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-                                            <ul class="list-disc list-inside">
-                                                @foreach ($errors->all() as $error)
-                                                    <li>{{ $error }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
-
-                                    <!-- API Keys Table -->
-                                    <div class="w-full m-1 bg
-0"></textarea>
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('Scopes (Permissions)') }} <span class="text-red-500">*</span></label>
